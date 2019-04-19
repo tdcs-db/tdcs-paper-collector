@@ -1,6 +1,7 @@
 import logging
 from Bio import Entrez
 import json
+from util import get_val_recursively as _get_val_recursively
 
 Entrez.email = 'admin@neutrino.xyz'
 
@@ -37,15 +38,80 @@ def pubmed_search_for_id(query, search_param = None, entrez = None):
 
     return results
     
-def entrez_decoder():
+def entrez_decoder(pubmed_records):
+    """Decode return value of entrez decoder
     """
-    """
+    def articledate(article__date):
+        if len(article__date) >=1 :
+            return {
+                'year': article__date[0].get('Year'),
+                'month': article__date[0].get('Month'),
+                'day': article__date[0].get('Day')
+            }
+        else:
+            return None
 
-    decorder_map = {
+    def articlejournal(article__journal):
+        if article__journal:
+            return {
+                'title': article__journal.get('Title'),
+                'iso_abbrev': article__journal.get('ISOAbbreviation'),
+                'date': {
+                    'year': article__journal.get('PubDate',{}).get('Year'),
+                    'month': article__journal.get('PubDate',{}).get('Month'),
+                    'day': article__journal.get('PubDate',{}).get('Day')
+                }
+            }
+        else:
+            return None
 
-    }
+    def articleauthors(article__authors):
+        
+        authors = []
 
-    return 
+        if article__authors:
+            for author in article__authors:
+                author__details = {
+                    'last_name': author.get('LastName'),
+                    'first_name': author.get('ForeName'),
+                    'affiliations': [
+                        i.get('Affiliation') for i in author.get('AffiliationInfo', [])
+                    ]
+                }
+                authors.append(author__details)
+
+        return authors
+
+    pubmed_articles = pubmed_records.get('PubmedArticle')
+
+
+    articles_export = []
+
+    for record in pubmed_articles:
+        record_medlinecitation = record.get('MedlineCitation', {})
+        record_medlinecitation_article = record_medlinecitation.get('Article', {})
+        record_medlinecitation_article__title = record_medlinecitation_article.get('ArticleTitle')
+        record_medlinecitation_article__date = articledate(
+            record_medlinecitation_article.get('ArticleDate', [])
+        )
+        record_medlinecitation_article__journal = articlejournal(
+            record_medlinecitation_article.get('Journal')
+        )
+        record_medlinecitation_article__abstract = record_medlinecitation_article.get('Abstract')
+        record_medlinecitation_article__authors = articleauthors(
+            record_medlinecitation_article.get('AuthorList')
+            )
+        record_export = {
+            'title': record_medlinecitation_article__title,
+            'date': record_medlinecitation_article__date,
+            'journal': record_medlinecitation_article__journal,
+            'abstract': record_medlinecitation_article__abstract,
+            'authors': record_medlinecitation_article__authors
+        }
+
+        articles_export.append(record_export)
+
+    return articles_export
 
 def pubmed_id_to_records(pubmed_ids, fetch_params = None, entrez = None):
     """Extract publication details for a pubmed id
@@ -87,6 +153,13 @@ if __name__ == '__main__':
     print(id_list)
     papers = pubmed_id_to_records(id_list)
 
-    print( papers.values() )
-    for i in papers:
-        print(i)
+    # print( papers )
+    
+
+    papers_extracted = entrez_decoder(papers)
+    print(
+        papers_extracted
+    )
+        
+
+    print('END of GAME')
