@@ -51,6 +51,12 @@ def entrez_decoder(pubmed_records):
         else:
             return None
 
+    def articleabstract(article__abstract):
+        if article__abstract:
+            return article__abstract.get('AbstractText')
+        else:
+            return None
+
     def articlejournal(article__journal):
         if article__journal:
             return {
@@ -97,7 +103,9 @@ def entrez_decoder(pubmed_records):
         record_medlinecitation_article__journal = articlejournal(
             record_medlinecitation_article.get('Journal')
         )
-        record_medlinecitation_article__abstract = record_medlinecitation_article.get('Abstract')
+        record_medlinecitation_article__abstract = articleabstract(
+            record_medlinecitation_article.get('Abstract')
+        )
         record_medlinecitation_article__authors = articleauthors(
             record_medlinecitation_article.get('AuthorList')
             )
