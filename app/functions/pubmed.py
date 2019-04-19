@@ -1,7 +1,7 @@
 import logging
 from Bio import Entrez
 import json
-from util import get_val_recursively as _get_val_recursively
+from functions.util import get_val_recursively as _get_val_recursively
 
 Entrez.email = 'admin@neutrino.xyz'
 
