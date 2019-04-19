@@ -12,12 +12,13 @@ def main():
     id_list = results['IdList']
 
     with open('/tmp/tdcs_ids.txt', 'a+') as fp:
-        fp.write(id_list)
+        for line in id_list:
+            fp.write( str(line) + '\n' )
 
     papers = _pubmed_id_to_records(id_list)
 
     with open('/tmp/tdcs_records.txt', 'a+') as fp:
-        fp.write(papers)
+        fp.write( str(papers) )
 
     # print( papers )
 

@@ -95,6 +95,7 @@ def entrez_decoder(pubmed_records):
 
     for record in pubmed_articles:
         record_medlinecitation = record.get('MedlineCitation', {})
+        record_medlinecitation_pmid = str(record_medlinecitation.get('PMID', ''))
         record_medlinecitation_article = record_medlinecitation.get('Article', {})
         record_medlinecitation_article__title = record_medlinecitation_article.get('ArticleTitle')
         record_medlinecitation_article__date = articledate(
@@ -109,12 +110,15 @@ def entrez_decoder(pubmed_records):
         record_medlinecitation_article__authors = articleauthors(
             record_medlinecitation_article.get('AuthorList')
             )
+        record_medlinecitation_article__doi = str(record_medlinecitation_article.get('ELocationID',[]) )
         record_export = {
             'title': record_medlinecitation_article__title,
             'date': record_medlinecitation_article__date,
             'journal': record_medlinecitation_article__journal,
             'abstract': record_medlinecitation_article__abstract,
-            'authors': record_medlinecitation_article__authors
+            'authors': record_medlinecitation_article__authors,
+            'doi': record_medlinecitation_article__doi,
+            'pmid': record_medlinecitation_pmid
         }
 
         articles_export.append(record_export)
