@@ -51,6 +51,15 @@ def entrez_decoder(pubmed_records):
         else:
             return None
 
+    def articledoi(article__elocationid):
+        if len(article__elocationid) > 1:
+            return str(article__elocationid[0])
+        else:
+            return None
+
+
+
+
     def articleabstract(article__abstract):
         if article__abstract:
             return article__abstract.get('AbstractText')
@@ -110,7 +119,9 @@ def entrez_decoder(pubmed_records):
         record_medlinecitation_article__authors = articleauthors(
             record_medlinecitation_article.get('AuthorList')
             )
-        record_medlinecitation_article__doi = str(record_medlinecitation_article.get('ELocationID',[]) )
+        record_medlinecitation_article__doi = articledoi(
+            record_medlinecitation_article.get('ELocationID',[])
+            )
         record_export = {
             'title': record_medlinecitation_article__title,
             'date': record_medlinecitation_article__date,

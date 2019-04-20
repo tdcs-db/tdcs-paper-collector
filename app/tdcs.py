@@ -4,11 +4,33 @@ from functions.pubmed import pubmed_search_for_id as _pubmed_search_for_id
 from functions.pubmed import pubmed_id_to_records as _pubmed_id_to_records
 from functions.pubmed import entrez_decoder as _entrez_decoder
 import json
+import argparse
 
 def main():
 
+    parser = argparse.ArgumentParser(description='Download Pubmed tDCS data')
+    parser.add_argument(
+        '--keywords',
+        nargs='+',
+        dest='task', 
+        default='tdcs',
+        help='keywords to be searched'
+        )
+    parser.add_argument(
+        '--limit', 
+        dest='limit', 
+        default='10000',
+        help='limit the number of items to be downloaded'
+        )
+    args = parser.parse_args()
+    args_keywords = args.keywords
+    args_limit = args.limit
+
+    results = _pubmed_search_for_id(
+        args_keywords, 
+        search_param={'retmax': args_limit}
+        )
     
-    results = _pubmed_search_for_id('tdcs', search_param={'retmax': 2})
     id_list = results['IdList']
 
     with open('/tmp/tdcs_ids.txt', 'a+') as fp:
