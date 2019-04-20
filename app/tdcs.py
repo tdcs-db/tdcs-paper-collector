@@ -12,7 +12,7 @@ def main():
     parser.add_argument(
         '--keywords',
         nargs='+',
-        dest='task', 
+        dest='keywords', 
         default='tdcs',
         help='keywords to be searched'
         )
