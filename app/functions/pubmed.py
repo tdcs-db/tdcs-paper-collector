@@ -57,12 +57,9 @@ def entrez_decoder(pubmed_records):
         else:
             return None
 
-
-
-
     def articleabstract(article__abstract):
         if article__abstract:
-            return article__abstract.get('AbstractText')
+            return article__abstract.get('AbstractText', [])[0]
         else:
             return None
 
@@ -129,7 +126,8 @@ def entrez_decoder(pubmed_records):
             'abstract': record_medlinecitation_article__abstract,
             'authors': record_medlinecitation_article__authors,
             'doi': record_medlinecitation_article__doi,
-            'pmid': record_medlinecitation_pmid
+            'pmid': record_medlinecitation_pmid,
+            '': '' + record_medlinecitation_pmid if record_medlinecitation_pmid else None
         }
 
         articles_export.append(record_export)
