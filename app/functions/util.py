@@ -1,4 +1,7 @@
 import logging
+import pandas as pd
+import os
+import ast
 
 
 def get_val_recursively(dictionary, names):
@@ -45,3 +48,19 @@ def get_val_recursively(dictionary, names):
         except TypeError:
             logging.log(20, 'TypeError: Could not find {}'.format(tmp[0]))
             return None
+
+
+
+def pubmed_json2csv(json_file_path, csv_file_path):
+    """This function converts json of pubmed download to csv to be uploaded to google spreadsheet.
+    """
+    
+    if not os.path.isfile(json_file_path):
+        raise Exception('json file input does not exist: {}'.format(json_file_path) )
+    
+    
+    df_from_json = pd.read_json(json_file_path, lines=True)
+    
+    df_from_json.to_csv(csv_file_path, index=False)
+        
+    
