@@ -2,6 +2,8 @@ import logging
 import pandas as pd
 import os
 import ast
+import config as _config
+import json
 
 
 def get_val_recursively(dictionary, names):
@@ -63,4 +65,30 @@ def pubmed_json2csv(json_file_path, csv_file_path):
     
     df_from_json.to_csv(csv_file_path, index=False)
         
-    
+
+def get_gsheets_config(config_group=None, return_path = True):
+    """Get configuration file for other configurations of this package
+    """
+
+    base_path = os.path.dirname(_config.__file__)
+
+    if config_group=='local':
+        auth_path = os.path.join( base_path, 'config.local.json' )
+    else:
+        auth_path = os.path.join( base_path, 'config.json' )
+
+    print(f'Fetching config file from {auth_path}' )
+
+    if return_path:
+        return auth_path
+    else:
+        with open(auth_path, 'r') as f:
+            config_dict = json.loads( f.read() )
+
+        return config_dict
+
+if __name__ == "__main__":
+    print(
+        get_gsheets_config()
+        )
+    print('End of Game')
